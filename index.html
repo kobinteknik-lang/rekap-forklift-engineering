@@ -186,35 +186,38 @@ function resetForm() {
     document.getElementById("unit").value = "";
     document.getElementById("user").value = "";
     document.getElementById("teknisi").value = "";
+    document.getElementById("analisa").value = "";
+    document.getElementById("tindakan").value = "";
+    document.getElementById("catatan").value = "";
 }
 
 // ================= LOAD DATA =================
 function load() {
     let url = "https://script.google.com/macros/s/AKfycbwShMhN06eQIPHuLe7vKv19tf7w6Bn_Hf_W0qw3Hj0uXe0UvKUKJKP3fmKyRgsLhsGJeQ/exec";
-    
-    // Gunakan fetch biasa untuk GET
-    fetch(url)
+    let tbody = document.getElementById("data");
+    tbody.innerHTML = "<tr><td colspan='10'>Sedang mengambil data dari server...</td></tr>";
+
+    // Gunakan parameter ?timestamp agar tidak terkena cache browser
+    fetch(url + "?cache=" + new Date().getTime())
         .then(res => res.json())
         .then(data => {
-            let tbody = document.getElementById("data");
             tbody.innerHTML = "";
             for (let i = 1; i < data.length; i++) {
                 let d = data[i];
-                // Menambahkan tombol hapus dengan index baris
-                tbody.innerHTML += `<tr>
-                    <td>${d[0]}</td><td>${d[2]}</td><td>${d[4]}</td><td>${d[5]}</td>
-                    <td>${d[6]}</td><td>${d[7]}</td><td>${d[8]}</td><td>${d[9]}</td>
-                    <td>${d[10]}</td>
-                    <td><button onclick="hapusData(${i})">Hapus</button></td>
-                </tr>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${d[0]}</td><td>${d[2]}</td><td>${d[4]}</td><td>${d[5]}</td>
+                        <td>${d[6]}</td><td>${d[7]}</td><td>${d[8]}</td><td>${d[9]}</td>
+                        <td>${d[10]}</td>
+                        <td><button onclick="hapusData(${i})">Hapus</button></td>
+                    </tr>`;
             }
         })
         .catch(err => {
             console.error(err);
-            document.getElementById("data").innerHTML = "<tr><td colspan='10'>Gagal memuat. Cek Console (F12)</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='10'>Gagal memuat data. Cek Console F12!</td></tr>";
         });
 }
-
 // ================= HAPUS DATA =================
 function hapusData(index) {
     if(!confirm("Yakin ingin menghapus data ini?")) return;
