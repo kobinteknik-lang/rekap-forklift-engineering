@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Perbaikan Forklift</title>
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: var(--primary); margin-bottom: 25px; }
+        
+        /* Menu Tab */
+        .menu { display: flex; gap: 10px; margin-bottom: 20px; }
+        .menu button { flex: 1; padding: 12px; border: none; border-radius: 10px; background: #e2e8f0; cursor: pointer; font-weight: 600; }
+        .menu button.active { background: var(--primary); color: #fff; }
+        
+        /* Card Layout */
+        .card { border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; background: #fff; }
+        .card-title { font-size: 14px; font-weight: 800; color: #475569; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        label { font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 5px; display: block; }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; background: #f8fafc; }
+        
+        .radio-group { display: flex; gap: 15px; flex-wrap: wrap; padding: 10px; background: #f1f5f9; border-radius: 8px; }
+        
+        /* Button */
+        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #1d4ed8; }
+        
+        /* Table */
+        .table-wrapper { overflow-x: auto; margin-top: 20px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        table { width: 100%; min-width: 1000px; border-collapse: collapse; }
+        th { background: #f1f5f9; padding: 12px; font-size: 11px; text-align: left; }
+        td { padding: 12px; border-top: 1px solid #f1f5f9; font-size: 13px; }
+        
+        .tab { display: none; }
+        .tab.active { display: block; }
+        
+        /* Notification */
+        #notif { position: fixed; bottom: 20px; right: 20px; background: #334155; color: white; padding: 12px 20px; border-radius: 8px; display: none; }
+    </style>
+</head>
+<body>    
+
+<div class="container">
+    <h2>Rekap Perbaikan Forklift</h2>
+    <div class="menu">
+        <button id="btn1" class="active" onclick="tab('form')">Input</button>
+        <button id="btn2" onclick="tab('history')">History</button>
+    </div>
+
+    <div id="form" class="tab active">
+        <div class="card">
+            <div class="card-title">📅 Informasi Dasar</div>
+            <div class="grid">
+                <div><label>Tanggal Mulai</label><input type="date" id="tgl"></div>
+                <div><label>Jam Mulai</label><div class="grid"><select id="startHour"></select><select id="startMinute"></select></div></div>
+            </div>
+            <label>Merk</label>
+            <div class="radio-group">
+                <label><input type="radio" name="merk" value="Toyota" checked> Toyota</label>
+                <label><input type="radio" name="merk" value="Tailift"> Tailift</label>
+                <label><input type="radio" name="merk" value="Mitsubishi"> Mitsubishi</label>
+                <label><input type="radio" name="merk" value="Heli"> Heli</label>
+                <label><input type="radio" name="merk" value="Xiagong"> Xiagong</label>
+                <label><input type="radio" name="merk" value="TCM"> TCM</label>
+            </div>
+            <div class="grid">
+                <div><label>User</label><input type="text" id="user"></div>
+               <div><label>No. Unit Alat Berat</label><input type="number" id="unit"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <label>Penjelasan Permintaan</label><textarea id="penjelasan"></textarea>
+            <div class="grid">
+                <div><label>Jenis</label><div class="radio-group"><label><input type="radio" name="jenis" value="Diesel" checked> Diesel</label><label><input type="radio" name="jenis" value="Electric"> Electric</label></div></div>
+                <div><label>Prioritas</label><div class="radio-group"><label><input type="radio" name="prio" value="Normal" checked> Normal</label><label><input type="radio" name="prio" value="Darurat"> Darurat</label></div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">👨‍🔧 Teknisi, Status & Waktu Selesai</div>
+            <div class="grid">
+                <div><label>Teknisi</label><input type="text" id="teknisi"></div>
+                <div><label>Status</label><div class="radio-group"><label><input type="radio" name="status" value="Selesai" checked> Selesai</label><label><input type="radio" name="status" value="Pending"> Pending</label></div></div>
+                <div><label>Tanggal Selesai</label><input type="date" id="tglSelesai"></div>
+                <div><label>Jam Selesai</label><div class="grid"><select id="endHour"></select><select id="endMinute"></select></div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <label>Analisa</label><textarea id="analisa"></textarea>
+            <label>Tindakan</label><textarea id="tindakan"></textarea>
+            <label>Kondisi Mesin</label>
+            <div class="radio-group">
+                <label><input type="radio" name="kondisi" value="Normal" checked> Normal</label>
+                <label><input type="radio" name="kondisi" value="Catatan"> Catatan</label>
+                <label><input type="radio" name="kondisi" value="Berhenti"> Berhenti</label>
+            </div>
+            <label>Catatan Tambahan</label><textarea id="catatan"></textarea>
+        </div>
+
+        <button class="btn" onclick="simpan()">Simpan Data</button>
+    </div>
+
+    <div id="history" class="tab">
+    <div class="grid" style="margin-bottom:15px;">
+        <button class="btn" onclick="exportExcel()">📥 Export Excel</button>
+        <button class="btn" style="background:#ef4444;" onclick="hapusSemua()">Hapus Semua</button>
+    </div>
+    
+    <input type="text" id="searchInput" placeholder="🔍 Cari berdasarkan No Unit..." onkeyup="load()">
+    
+    <div class="table-wrapper">
+        <table id="tabelData">
+            <thead><tr><th>Mulai</th><th>Selesai</th><th>Unit</th><th>Merk</th><th>User</th><th>Prioritas</th><th>Teknisi</th><th>Status</th><th>Kondisi</th><th>Aksi</th></tr></thead>
+            <tbody id="data"></tbody>
+        </table>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+// Panggil init saat halaman dimuat
+window.onload = () => {
+    document.getElementById("tgl").value = new Date().toISOString().split("T")[0];
+    initTime();
+    load(); // Memanggil load data dari Sheets
+};
+
+// ================= TIME INIT =================
+function initTime(){
+    for(let i=0;i<24;i++){
+        let v=String(i).padStart(2,"0");
+        document.getElementById("startHour").innerHTML+=`<option value="${v}">${v}</option>`;
+        document.getElementById("endHour").innerHTML+=`<option value="${v}">${v}</option>`;
+    }
+    for(let i=0;i<60;i++){
+        let v=String(i).padStart(2,"0");
+        document.getElementById("startMinute").innerHTML+=`<option value="${v}">${v}</option>`;
+        document.getElementById("endMinute").innerHTML+=`<option value="${v}">${v}</option>`;
+    }
+}
+
+// ================= TAB =================
+function tab(id){
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+function notif(msg){
+    let n = document.getElementById("notif");
+    n.innerText = msg;
+    n.style.display = "block";
+    setTimeout(() => { n.style.display = "none"; }, 1500);
+}
+
+// ================= SIMPAN =================
+function simpan() {
+    let url = "https://script.google.com/macros/s/AKfycbwShMhN06eQIPHuLe7vKv19tf7w6Bn_Hf_W0qw3Hj0uXe0UvKUKJKP3fmKyRgsLhsGJeQ/exec";
+    let data = {
+        tgl: document.getElementById("tgl").value,
+        jamMulai: document.getElementById("startHour").value + ":" + document.getElementById("startMinute").value,
+        tglSelesai: document.getElementById("tglSelesai").value,
+        jamSelesai: document.getElementById("endHour").value + ":" + document.getElementById("endMinute").value,
+        unit: document.getElementById("unit").value,
+        merk: document.querySelector('[name="merk"]:checked').value,
+        user: document.getElementById("user").value,
+        prio: document.querySelector('[name="prio"]:checked').value,
+        teknisi: document.getElementById("teknisi").value,
+        status: document.querySelector('[name="status"]:checked').value,
+        kondisi: document.querySelector('[name="kondisi"]:checked').value,
+        analisa: document.getElementById("analisa").value,
+        tindakan: document.getElementById("tindakan").value,
+        catatan: document.getElementById("catatan").value
+    };
+
+    fetch(url, { method: "POST", mode: "no-cors", cache: "no-cache", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
+    .then(() => { notif("Data tersimpan!"); resetForm(); load(); })
+    .catch(err => notif("Error: " + err));
+}
+
+function resetForm() {
+    document.getElementById("unit").value = "";
+    document.getElementById("user").value = "";
+    document.getElementById("teknisi").value = "";
+}
+
+// ================= LOAD DATA =================
+function load() {
+    let url = "https://script.google.com/macros/s/AKfycbwShMhN06eQIPHuLe7vKv19tf7w6Bn_Hf_W0qw3Hj0uXe0UvKUKJKP3fmKyRgsLhsGJeQ/exec";
+    let tbody = document.getElementById("data");
+    tbody.innerHTML = "<tr><td colspan='10'>Memuat data...</td></tr>";
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            tbody.innerHTML = "";
+            for (let i = 1; i < data.length; i++) {
+                let d = data[i];
+                tbody.innerHTML += `<tr>
+                    <td>${d[0]} ${d[1]}</td><td>${d[2]} ${d[3]}</td><td>${d[4]}</td>
+                    <td>${d[5]}</td><td>${d[6]}</td><td>${d[7]}</td><td>${d[8]}</td>
+                    <td>${d[9]}</td><td>${d[10]}</td>
+                    <td><button onclick="hapusData(${i})">Hapus</button></td>
+                </tr>`;
+            }
+        });
+}
+
+// ================= HAPUS DATA =================
+function hapusData(index) {
+    if(!confirm("Yakin ingin menghapus data ini?")) return;
+    
+    let url = "https://script.google.com/macros/s/AKfycbwShMhN06eQIPHuLe7vKv19tf7w6Bn_Hf_W0qw3Hj0uXe0UvKUKJKP3fmKyRgsLhsGJeQ/exec";
+    
+    fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ aksi: 'hapus', index: index })
+    }).then(() => {
+        notif("Data berhasil dihapus!");
+        load(); // Memuat ulang tabel
+    });
+}
+</script>
+</body>
+<div id="notif" style="position:fixed; bottom:20px; right:20px; background:#334155; color:white; padding:12px 20px; border-radius:8px; display:none; z-index:9999;"></div>
+</html>
